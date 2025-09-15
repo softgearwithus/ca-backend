@@ -26,7 +26,6 @@ app.get("/", (req, res) => {
 app.use("/api/consultations", consultationsData);
 app.use("/api/admin", adminRoutes);
 
-// DB connection
 connectDB();
 
 export default app
