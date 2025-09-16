@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://ca-two-orpin.vercel.app","https://www.mycsonline.in"],
+    origin: ["http://localhost:5173","https://www.mycsonline.in"],
     methods: ["GET", "POST"],
     credentials: true,
   })
