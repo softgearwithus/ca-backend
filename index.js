@@ -4,6 +4,7 @@ import consultationsData from "./routes/formdata.route.js";
 import { connectDB } from "./lib/db.js";
 import cors from "cors";
 import adminRoutes from "./routes/admin.route.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("backend running.");
