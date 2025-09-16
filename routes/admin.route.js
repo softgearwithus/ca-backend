@@ -7,7 +7,8 @@ const JWT_SECRET = "your_jwt_secret_key";
 
 const ADMINS = [
   { email: "admin@example.com", password: "admin123" },
-  { email: "super@example.com", password: "super123" }
+  { email: "super@example.com", password: "super123" },
+  { email: "cssandeeprajbhar@gmail.com",password:"sandeep@903"}
 ];
 
 router.post("/verify", (req, res) => {
