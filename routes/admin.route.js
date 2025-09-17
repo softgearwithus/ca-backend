@@ -71,4 +71,18 @@ router.post("/download", async (req, res) => {
   }
 });
 
+// GET all downloads
+router.get("/download", async (req, res) => {
+  try {
+    const downloads = await Download.find();
+    res.status(200).json(downloads);
+  } catch (error) {
+    console.error("Error fetching downloads:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
 export default router;
