@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import Consultation from "../model/consultation.model.js";
+import Download from "../model/download.js"
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = "your_jwt_secret_key";
@@ -41,6 +42,32 @@ router.get("/count", async (req, res) => {
   } catch (err) {
     console.error("Error counting consultations:", err);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// POST /download
+router.post("/download", async (req, res) => {
+  try {
+    const { companyAct, section, mbp, fileUrl } = req.body;
+
+    if (!companyAct || !section || !mbp || !fileUrl) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const newDownload = await Download.create({
+      companyAct,
+      section,
+      mbp,
+      fileUrl,
+    });
+
+    return res.status(201).json({
+      message: "Download entry created successfully",
+      data: newDownload,
+    });
+  } catch (error) {
+    console.error("Error creating download:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
