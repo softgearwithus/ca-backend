@@ -82,6 +82,24 @@ router.get("/download", async (req, res) => {
   }
 });
 
+// DELETE a download by ID
+router.delete("/download/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await Download.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Download not found" });
+    }
+
+    return res.status(200).json({ message: "Download deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting download:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 
 
