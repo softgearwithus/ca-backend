@@ -5,6 +5,7 @@ import { connectDB } from "./lib/db.js";
 import cors from "cors";
 import adminRoutes from "./routes/admin.route.js";
 import cookieParser from "cookie-parser";
+import compliance from "./routes/compliance.route.js"
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/consultations", consultationsData);
 app.use("/api/admin", adminRoutes);
+app.use("/api/admin/compliance",compliance);
 
 connectDB();
 
