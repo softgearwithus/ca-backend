@@ -2,7 +2,7 @@ import cors from "cors";
 import express from "express";
 import multer from "multer";
 import cloudinary from "../lib/upload.js";
-import Blog from "../models/Blog.js";
+import Blog from "../model/Blog.js";
 
 const router = express.Router();
 
