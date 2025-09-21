@@ -7,21 +7,25 @@ const router = express.Router();
 // CREATE blog (with image upload)
 router.post("/", upload.single("image"), async (req, res) => {
   try {
+    console.log("req.body:", req.body);
+    console.log("req.file:", req.file);
+
     const { title, content } = req.body;
     if (!title || !content) {
-      return res.status(400).json({ message: "Title and content are required" });
+      return res.status(400).json({ message: "Title and content required" });
     }
 
-    const image = req.file ? req.file.path : null;
+    const image = req.file?.path || null;
     const blog = new Blog({ title, content, image });
     const savedBlog = await blog.save();
 
     res.status(201).json({ success: true, data: savedBlog });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: error.message });
+  } catch (err) {
+    console.error("Blog upload error:", err);
+    res.status(500).json({ success: false, message: err.message });
   }
 });
+
 
 
 // GET all blogs
