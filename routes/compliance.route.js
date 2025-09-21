@@ -38,16 +38,19 @@ router.delete("/update/:id", async (req, res) => {
    📌 Newsletters (POST + GET)
 --------------------------------- */
 router.post("/newsletter", async (req, res) => {
-  try {
-    const newsletter = new Newsletter(req.body);
-    await newsletter.save();
-    res.status(201).json(newsletter);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+  console.log("Received body:", req.body); // check this in terminal
+  const { month, driveLink } = req.body;
+  if (!month) return res.status(400).json({ error: "Month required" });
+
+  const newsletter = new Newsletter({ month, driveLink });
+  await newsletter.save();
+  res.status(201).json(newsletter);
 });
 
+
+
 router.get("/newsletter", async (req, res) => {
+    console.log("Received body:", req.body);
   try {
     const newsletters = await Newsletter.find().sort({ _id: -1 });
     res.json(newsletters);

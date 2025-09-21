@@ -8,7 +8,9 @@ const complianceUpdateSchema = new mongoose.Schema({
 
 const newsletterSchema = new mongoose.Schema({
   month: { type: String, required: true },
-});
+  driveLink: { type: String }, // ✅ should work
+}, { timestamps: true });
+
 
 const complianceEventSchema = new mongoose.Schema({
   title: { type: String, required: true },
