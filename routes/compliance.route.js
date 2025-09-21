@@ -19,9 +19,9 @@ router.post("/update", async (req, res) => {
 router.get("/update", async (req, res) => {
   try {
     const updates = await ComplianceUpdate.find().sort({ _id: -1 });
-    res.json(updates);
+    res.json({ success: true, data: updates });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
@@ -50,12 +50,11 @@ router.post("/newsletter", async (req, res) => {
 
 
 router.get("/newsletter", async (req, res) => {
-    console.log("Received body:", req.body);
   try {
     const newsletters = await Newsletter.find().sort({ _id: -1 });
-    res.json(newsletters);
+    res.json({ success: true, data: newsletters });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
@@ -83,10 +82,10 @@ router.post("/event", async (req, res) => {
 
 router.get("/event", async (req, res) => {
   try {
-    const events = await ComplianceEvent.find().sort({ due: 1 }); // sort by due date
-    res.json(events);
+    const events = await ComplianceEvent.find().sort({ due: 1 });
+    res.json({ success: true, data: events });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

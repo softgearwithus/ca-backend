@@ -1,11 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import consultationsData from "./routes/formdata.route.js";
 import { connectDB } from "./lib/db.js";
 import cors from "cors";
 import adminRoutes from "./routes/admin.route.js";
 import cookieParser from "cookie-parser";
 import compliance from "./routes/compliance.route.js"
+import blogRoutes from "./routes/blogRoutes.js"
 
 dotenv.config();
 
@@ -29,7 +31,8 @@ app.get("/", (req, res) => {
 app.use("/api/consultations", consultationsData);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/compliance",compliance);
+app.use("/api/blogs", blogRoutes);
 
 connectDB();
-
+app.listen(5000,()=>{console.log("api")})
 export default app
