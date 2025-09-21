@@ -58,4 +58,19 @@ router.get("/", async (req, res) => {
   }
 });
 
+// GET a single blog by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({ success: false, message: "Blog not found" });
+    }
+    res.status(200).json({ success: true, data: blog });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+
 export default router;
