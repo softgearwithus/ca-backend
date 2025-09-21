@@ -1,83 +1,72 @@
 import express from "express";
-import Blog from "../model/Blog.js"
-import upload from "../lib/upload.js";
+import multer from "multer";
+import cloudinary from "../lib/upload.js";
+import Blog from "../model/Blog.js";
 
 const router = express.Router();
 
-// CREATE blog (with image upload)
+// Multer memory storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+// POST a blog
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
-
     const { title, content } = req.body;
+
     if (!title || !content) {
-      return res.status(400).json({ message: "Title and content required" });
+      return res.status(400).json({ success: false, message: "Title and content are required" });
     }
 
-    const image = req.file?.path || null;
-    const blog = new Blog({ title, content, image });
-    const savedBlog = await blog.save();
+    let imageUrl = null;
 
+    if (req.file) {
+      // Upload buffer to Cloudinary
+      const uploadResult = await cloudinary.uploader.upload_stream(
+        { folder: "blogs" },
+        (error, result) => {
+          if (error) throw error;
+          return result;
+        }
+      );
+
+      // Alternative using Promises:
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "blogs" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+
+      imageUrl = result.secure_url;
+    }
+
+    const newBlog = new Blog({
+      title,
+      content,
+      image: imageUrl,
+    });
+
+    const savedBlog = await newBlog.save();
     res.status(201).json({ success: true, data: savedBlog });
-  } catch (err) {
-    console.error("Blog upload error:", err);
-    res.status(500).json({ success: false, message: err.message });
+  } catch (error) {
+    console.error("Blog upload error:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
-
-
 
 // GET all blogs
 router.get("/", async (req, res) => {
   try {
     const blogs = await Blog.find().sort({ createdAt: -1 });
-    res.status(200).json(blogs);
+    res.status(200).json({ success: true, data: blogs });
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// GET single blog
-router.get("/:id", async (req, res) => {
-  try {
-    const blog = await Blog.findById(req.params.id);
-    if (!blog) return res.status(404).json({ message: "Blog not found" });
-    res.status(200).json(blog);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// UPDATE blog (with optional new image)
-router.put("/:id", upload.single("image"), async (req, res) => {
-  try {
-    const { title, content } = req.body;
-    const updateData = { title, content };
-
-    if (req.file) {
-      updateData.image = req.file.path; // new Cloudinary URL
-    }
-
-    const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, updateData, { new: true });
-
-    if (!updatedBlog) return res.status(404).json({ message: "Blog not found" });
-
-    res.status(200).json(updatedBlog);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// DELETE blog
-router.delete("/:id", async (req, res) => {
-  try {
-    const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
-    if (!deletedBlog) return res.status(404).json({ message: "Blog not found" });
-
-    res.status(200).json({ message: "Blog deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error fetching blogs:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
